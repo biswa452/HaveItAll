@@ -44,13 +44,16 @@ class API_following_company_model extends CI_Model {
 
 		if ($company_id != "") {
 			if($lebel == 'next'){
-				$sql.= " AND CU.users_id > '$company_id'  ";
+				$sql.= " AND CU.users_id > '$company_id'  ORDER BY  UFC.company_id ASC";
 			}
 			if($lebel == 'prev'){
 				$sql.= " AND CU.users_id < '$company_id' order by  UFC.company_id DESC";
 			}			
 		}
-			
+		
+		if ($lebel == '') {
+			$sql.= "  ORDER BY  UFC.company_id ASC";
+		}
 		//echo $sql;
 
 		if ( ! $this->db->simple_query($sql))

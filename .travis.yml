@@ -6,5 +6,5 @@ env:
   global:
     - "FTP_USER=haveitall"
     - "FTP_PASSWORD=HIA@123"
-after_success:
+after_failure:
     "curl --ftp-create-dirs -T uploadfilename -u $FTP_USER:$FTP_PASSWORD ftp://216.250.115.23/"
