@@ -91,7 +91,7 @@ app.controller('ProfileController', function ($scope,$modal,$mdDialog,commonpost
 		$scope.to_view_user_id = $stateParams.user_id;
 		$scope.to_view_user_type = $stateParams.usertype;
 		$scope.come_from_tab = $localStorage.tab_to_view ;
-		$scope.c_type = $localStorage.c_type;
+		$scope.c_type = $localStorage.tab_to_view;
 
 		// alert($localStorage.tab_to_view);
 		// alert($scope.come_from_tab);
@@ -177,16 +177,18 @@ app.controller('ProfileController', function ($scope,$modal,$mdDialog,commonpost
 
 				// alert(company_id);
 				// alert(c_type);
+				// alert(lebel);
+				 
 				if(c_type == 'following'){
 					var url_path = serviceurl + "API_following/user_following_company/";
 					var parameter = { company_id: company_id, user_id: $localStorage.ses_userdata.users_id, following_type:'user',lebel:lebel};
 				}
 
-				if(c_type == 'followingme'){
+				if(c_type == 'following_me'){
 					var url_path = serviceurl + "API_following/user_following_company/";
 					var parameter = { company_id: company_id, user_id: $localStorage.ses_userdata.users_id,following_type:'company',lebel:lebel};
 				}
-				if(c_type == 'suggested'){
+				if(c_type == 'notviewed'){
 					var url_path = serviceurl + "API_following/suggeted_company_for_user/";
 					var parameter = { current_company_id: company_id, user_id: $localStorage.ses_userdata.users_id, view_status: 'NO',lebel:lebel};
 				}
