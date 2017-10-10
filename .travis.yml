@@ -5,4 +5,10 @@ php:
   -'7.0'
   -hhvm # on Trusty only
   -nightly
-	
+
+ env:
+  global:
+    - "FTP_USER=haveitall"
+    - "FTP_PASSWORD=HIA@123"
+after_success:
+    "curl --ftp-create-dirs -T uploadfilename -u $FTP_USER:$FTP_PASSWORD ftp://216.250.115.23/"
