@@ -30,7 +30,7 @@ class API_job_model extends CI_Model {
 			
 
 			if($level == 'next'){
-				$sql.= " AND AJ.job_post_id > '$current_job_id' ";
+				$sql.= " AND AJ.job_post_id > '$current_job_id' ORDER BY  AJ.job_post_id ASC ";
 			}
 
 			if($level == 'prev'){
@@ -38,6 +38,10 @@ class API_job_model extends CI_Model {
 			}
 		}
 			
+		if ($level == '') {
+			$sql.= "  ORDER BY  AJ.job_post_id ASC";
+		}
+
 		//echo $sql;exit;
 
 		if ( ! $this->db->simple_query($sql))
@@ -83,12 +87,16 @@ class API_job_model extends CI_Model {
 			
 
 			if($level == 'next'){
-				$sql.= " AND SJ.job_post_id > '$current_job_id'  ";
+				$sql.= " AND SJ.job_post_id > '$current_job_id' ORDER BY  SJ.job_post_id ASC ";
 			}
 
 			if($level == 'prev'){
 				$sql.= " AND SJ.job_post_id < '$current_job_id' ORDER BY SJ.job_post_id DESC ";
 			}
+			if ($level == '') {
+				$sql.= "  ORDER BY  SJ.job_post_id ASC";
+			}
+
 		}
 
 			
@@ -254,11 +262,12 @@ class API_job_model extends CI_Model {
 			
 		}
 			if($level == 'prev'){
-				$sql.=" GROUP BY JOB_MATCH.jobpost_id order by JOB_MATCH.jobpost_id DESC ";
+				$sql.=" GROUP BY JOB_MATCH.jobpost_id ORDER BY JOB_MATCH.jobpost_id DESC ";
 			}else{
-				$sql.=" GROUP BY JOB_MATCH.jobpost_id ";
+				$sql.=" GROUP BY JOB_MATCH.jobpost_id ORDER BY JOB_MATCH.jobpost_id ASC ";
 			}
 			
+
 
 		//echo $sql;exit;		
 		if ( ! $this->db->simple_query($sql))

@@ -312,12 +312,12 @@ class API_following_company_model extends CI_Model {
 
 			$sql.=" GROUP BY USER_MATCH.users_id ";
 
-		if ( $short_type=='next') {
-			$sql.= " ORDER BY USER_MATCH.users_id ASC  ";
-		}
 
 		if ( $short_type=='prev') {
 			$sql.= " ORDER BY USER_MATCH.users_id DESC ";
+		}
+		else {
+			$sql.= " ORDER BY USER_MATCH.users_id ASC  ";
 		}
 
 		//echo $sql;		
@@ -443,14 +443,13 @@ class API_following_company_model extends CI_Model {
 			$sql.= " AND UFC.user_id < '$current_user_id' ";
 		}
 		
-		if ( $short_type=='next') {
-			$sql.= " ORDER BY UFC.user_id ASC  ";
-		}
 
 		if ( $short_type=='prev') {
 			$sql.= " ORDER BY UFC.user_id DESC ";
 		}
-
+		else {
+			$sql.= " ORDER BY UFC.user_id ASC  ";
+		}
 		//echo $sql;
 
 		if ( ! $this->db->simple_query($sql))
@@ -512,13 +511,13 @@ class API_following_company_model extends CI_Model {
 		$sql.= " GROUP BY UVC.user_id ";	
 
 		//echo $sql;
-		if ( $short_type=='next') {
-			$sql.= " ORDER BY UVC.user_id ASC  ";
-		}
-
 		if ( $short_type=='prev') {
 			$sql.= " ORDER BY UVC.user_id DESC ";
 		}
+		else {
+			$sql.= " ORDER BY UVC.user_id ASC  ";
+		}
+
 
 
 
@@ -619,9 +618,9 @@ class API_following_company_model extends CI_Model {
 		
 	}
 
-function applied_users_for_company($company_id='', $status='')
+function applied_users_for_company($company_id='', $status='',$short_type='',$next_id='')
 	{
-		$sql = "SELECT hia_user_applied_jobs.user_id,hia_users.users_firstname,hia_users.users_lastname,hia_users.users_phone,fnStripTags(hia_users.users_bio) as users_bio ,hia_users.users_profilepic,hia_countries.name as country_name,hia_users.users_phone,hia_states.name as state_name,hia_cities.name as city_name 
+		$sql = "SELECT hia_user_applied_jobs.user_id, hia_user_applied_jobs.user_id as next_user_id, hia_users.users_firstname,hia_users.users_lastname,hia_users.users_phone,fnStripTags(hia_users.users_bio) as users_bio ,hia_users.users_profilepic,hia_countries.name as country_name,hia_users.users_phone,hia_states.name as state_name,hia_cities.name as city_name 
 		FROM hia_jobpost 
 		LEFT JOIN hia_user_applied_jobs ON (hia_jobpost.jobpost_id = hia_user_applied_jobs.job_post_id) 
 		LEFT JOIN hia_users ON (hia_user_applied_jobs.user_id =hia_users.users_id) 
@@ -629,9 +628,26 @@ function applied_users_for_company($company_id='', $status='')
 		LEFT JOIN hia_states ON (hia_users.users_state = hia_states.id) 
 		LEFT JOIN hia_cities ON (hia_users.users_city = hia_cities.id)
 		WHERE hia_jobpost.jobpost_companyid = '$company_id'  
-		AND hia_jobpost.jobpost_status = '$status' 
-		GROUP by hia_user_applied_jobs.user_id";          
-        //echo $sql;exit; 
+		AND hia_jobpost.jobpost_status = '$status' ";          
+        
+        if($next_id != ""){
+        	if($short_type == 'next'){
+        		$sql .= " AND hia_user_applied_jobs.user_id > '$next_id'";
+        	}
+        	if($short_type == 'prev'){
+        		$sql .= " AND hia_user_applied_jobs.user_id < '$next_id'";
+        	}
+        } 
+		
+		if($short_type == 'prev'){
+			$sql.= " GROUP by hia_user_applied_jobs.user_id order by hia_user_applied_jobs.user_id DESC ";	
+		}else{
+			$sql.= " GROUP by hia_user_applied_jobs.user_id order by hia_user_applied_jobs.user_id ASC ";	
+		}
+
+
+		 // echo $sql;exit; 
+
 
 		if ( ! $this->db->simple_query($sql))
 		{
@@ -645,9 +661,9 @@ function applied_users_for_company($company_id='', $status='')
 		}		 
 	}
 
-	function viewed_users_for_company($company_id='', $status='')
+	function viewed_users_for_company($company_id='', $status='',$short_type='',$next_id='')
 	{
-		$sql = "SELECT hia_user_view_jobs.user_id,hia_users.users_firstname,hia_users.users_lastname,hia_users.users_phone,fnStripTags(hia_users.users_bio) as users_bio ,hia_users.users_profilepic,hia_countries.name as country_name,hia_users.users_phone,hia_states.name as state_name,hia_cities.name as city_name 
+		$sql = "SELECT hia_user_view_jobs.user_id, hia_user_view_jobs.user_id as next_user_id,hia_users.users_firstname,hia_users.users_lastname,hia_users.users_phone,fnStripTags(hia_users.users_bio) as users_bio ,hia_users.users_profilepic,hia_countries.name as country_name,hia_users.users_phone,hia_states.name as state_name,hia_cities.name as city_name 
 		FROM hia_jobpost 
 		LEFT JOIN hia_user_view_jobs ON (hia_jobpost.jobpost_id = hia_user_view_jobs.job_post_id) 
 		LEFT JOIN hia_users ON (hia_user_view_jobs.user_id =hia_users.users_id) 
@@ -655,8 +671,24 @@ function applied_users_for_company($company_id='', $status='')
 		LEFT JOIN hia_states ON (hia_users.users_state = hia_states.id) 
 		LEFT JOIN hia_cities ON (hia_users.users_city = hia_cities.id)
 		WHERE hia_jobpost.jobpost_companyid = '$company_id'  
-		AND hia_jobpost.jobpost_status = '$status'
-GROUP by hia_user_view_jobs.user_id	 ";          
+		AND hia_jobpost.jobpost_status = '$status' "; 
+
+		if($next_id != ""){
+			if($short_type == 'next'){
+        		$sql .= " AND hia_user_view_jobs.user_id > '$next_id' ";
+        	}
+        	if($short_type == 'prev'){
+        		$sql .= " AND hia_user_view_jobs.user_id < '$next_id' ";
+        	} 
+        } 
+
+		
+		if($short_type == 'prev'){
+			$sql.= " GROUP by hia_user_view_jobs.user_id order by hia_user_view_jobs.user_id DESC ";	
+		}else{
+			$sql.= " GROUP by hia_user_view_jobs.user_id  order by hia_user_view_jobs.user_id ASC ";	
+		}
+
         //echo $sql;exit; 
 
 		if ( ! $this->db->simple_query($sql))
